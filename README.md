@@ -3,3 +3,4 @@
 -   install and setup express
 -   install and setup prettier
 -   install nodemon
+-   connect db
