@@ -1,2 +1,8 @@
-PORT=3000
-MONGO_URI=mongodb://localhost:27017/mega_project
+PORT=4000
+BASE_URL=
+MONGO_URI= "mongodb://localhost:27017/megabackend"
+EMAIL_HOST=
+EMAIL_PORT=
+EMAIL_SECURE=
+EMAIL_USER=
+EMAIL_PASS= ""

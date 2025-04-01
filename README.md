@@ -6,3 +6,4 @@
 -   connect db
 -   error and res utility
 -   user model, route and middleware strucher
+-   sending email and verify user done
