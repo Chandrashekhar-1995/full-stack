@@ -4,3 +4,4 @@
 -   install and setup prettier
 -   install nodemon
 -   connect db
+-   error and res utility
