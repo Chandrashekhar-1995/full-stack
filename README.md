@@ -5,3 +5,4 @@
 -   install nodemon
 -   connect db
 -   error and res utility
+-   user model, route and middleware strucher
