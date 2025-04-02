@@ -58,7 +58,7 @@ return await bcrypt.compare(password, this.password);
 userSchema.methods.generateAccessToken = function () {
     return jwt.sign({id: this._id},
       process.env.ACCESS_TOKEN_SECRET,
-      { expiresIn: process.env.ACCESS_TOKEN_EXPIRY },
+      { expiresIn: process.env.ACCESS_TOKEN_EXPIRY},
     );
   };
 
