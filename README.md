@@ -7,3 +7,4 @@
 -   error and res utility
 -   user model, route and middleware strucher
 -   sending email and verify user done
+-   middleware for veryfy login using jwt token

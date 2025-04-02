@@ -1,9 +1,10 @@
-import User from "../models/user.model.js";
-import { asyncHandler } from "../utils/async-handler.js";
 import crypto from "crypto";
+import { asyncHandler } from "../utils/async-handler.js";
+import User from "../models/user.model.js";
 import { ApiError } from "../utils/api-error.js";
 import { ApiResponse } from "../utils/api-response.js";
 import sendVerificationEmail from "../utils/sendMail.js";
+import { log } from "console";
 
 // Register user
 const register = asyncHandler( async (req, res, next) =>{
@@ -43,12 +44,17 @@ const register = asyncHandler( async (req, res, next) =>{
             });
         await user.save();
 
-        await sendVerificationEmail(user.email, token);
+        const createdUser = await User.findById(user._id).select(
+            "-password"
+        );
+
+        // await sendVerificationEmail(user.email, token);
+        
     
         res.status(201).json(
             new ApiResponse(
                 201,
-                user,
+                createdUser,
                 "User registered successfully. Please check your email."
             )
         )
@@ -89,12 +95,64 @@ const verify = asyncHandler( async (req, res, next) => {
 });
 
 const login = asyncHandler( async (req, res, next) => {
-  
+    try {
+    const {email, password} = req.body;
+
+    if ( !email || !password) {
+        throw new ApiError(400, "All fields are required.")
+    };
+
+        const user = await User.findOne({
+            email
+        });
+
+        if (!user) {
+            throw new ApiError(400, "Email not registered" )
+        };
+    
+        // Validate password using the schema method
+        const isPasswordCorrect = await user.isPasswordCorrect(password);
+        if (!isPasswordCorrect) {
+            throw new ApiError(401, "Invalid credentials.");
+        }
+
+        // Generate JWT token using the user/customer model's method
+        const accessToken = user.generateAccessToken();
+        const refreshToken = user.generateRefreshToken();
+
+        user.refreshToken = refreshToken;
+        await user.save()
+
+        res.cookie("accessToken", accessToken)
+        res.cookie("refreshToken", refreshToken)
+        res.status(200).json(
+            new ApiResponse(
+                200,
+                user,
+                "Login successfull."
+            )
+        )
+    } catch (error) {
+        next(error)
+    }
 
 });
+
+const getProfile = asyncHandler(async (req, res, next) => {
+
+    try {
+        const userId = req.user.id
+        // Respond with the profile details
+        const user = await User.findById(userId).select("-password");
+        res.status(200).json(new ApiResponse(200, user, "Profile fetched successfully."));
+    } catch (err) {
+        next(err);
+    }
+})
 
 export {
     register,
     verify,
-    login
+    login, 
+    getProfile,
 }

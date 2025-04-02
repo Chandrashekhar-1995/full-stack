@@ -21,8 +21,10 @@ app.use(cors({
 
 // import routes
 import userRoutes from "./routes/user.routes.js";
+import { errorHandler } from "./middlewares/errorHandler.middleware.js";
 
 app.use("/api/v1/users", userRoutes);
+app.use(errorHandler);
 
 app.get("/", (req, res)=> {
     res.send("Hello world")
